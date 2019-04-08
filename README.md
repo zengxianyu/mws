@@ -1,5 +1,5 @@
 # Code for the paper 
-Code for paper in CVPR2019, 'Multi-source weak supervision for saliency detection'
+Code for the paper in CVPR2019, 'Multi-source weak supervision for saliency detection' ([pdf](https://arxiv.org/pdf/1904.00566.pdf))
 
 ## Results
 
