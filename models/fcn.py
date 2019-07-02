@@ -5,8 +5,8 @@ from torch.autograd.variable import Variable
 from torch.nn import init
 
 from .densenet import *
-from .resnet import *
-from .vgg import *
+# from .resnet import *
+# from .vgg import *
 
 # from densenet import *
 # from resnet import *
