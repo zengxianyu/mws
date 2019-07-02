@@ -6,8 +6,8 @@ import torch.nn.functional as F
 import numpy as np
 import pdb
 from .densenet import *
-from .resnet import *
-from .vgg import *
+# from .resnet import *
+# from .vgg import *
 import sys
 thismodule = sys.modules[__name__]
 
