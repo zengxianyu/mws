@@ -8,7 +8,7 @@ Code for the paper in CVPR2019, 'Multi-source weak supervision for saliency dete
   max$F_\beta$|.878|.856|.790|.799|.718|.767|.902|.849|
   MAE|.096|.084|.134|.167|.114|.096|.081|.097|
   
-Download result maps: [OneDrive](https://1drv.ms/u/s!AqVkBGUQ01XGhx_eNt8MfQ_HpCO0)
+Download result maps: [OneDrive](https://1drv.ms/u/s!AqVkBGUQ01XGhx_eNt8MfQ_HpCO0) / [GoogleDrive](https://drive.google.com/file/d/1PqsH6HI_juyE6ZeDFhJ7ByscSEakwRS0/view?usp=sharing)
 
 ## Usage
 ### Test
