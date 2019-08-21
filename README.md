@@ -29,7 +29,7 @@ python main.py \
 ```
 
 ### Train
-coming soon
+[code](https://github.com/zengxianyu/trainmws)
 
 ## Citation
 ```
