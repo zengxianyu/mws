@@ -13,7 +13,7 @@ Download result maps: [OneDrive](https://1drv.ms/u/s!AqVkBGUQ01XGhx_eNt8MfQ_HpCO
 ## Usage
 ### Test
 
-0. Environment: python2.7, pytorch'0.5.0a0+54db14e'
+0. Environment: python2.7, pytorch'1.0'
 
 1. [Download models](https://1drv.ms/f/s!AqVkBGUQ01XGhyeDYsaaxvAZXW7k) and put in the current folder
 
