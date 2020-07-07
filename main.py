@@ -56,6 +56,7 @@ def main():
     # saliency network
     sal_net = DeepLab(base='densenet169', c_output=1)
     sal_net = nn.DataParallel(sal_net).cuda()
+    """
     # the 1st, 2nd and 3rd rows of Table 1
     cls_net.load_state_dict(torch.load('net-cls-init.pth'))
     cap_net.load_state_dict(torch.load('net-cap-init.pth'))
@@ -92,6 +93,7 @@ def main():
     validate_two(loader, cls_net, cap_net, output_dir)
     fm, mae, _,_ = fm_and_mae(output_dir, opt.gt_dir)
     print('cls cap at ac fm %.3f'%fm)
+    """
     # the 6th row of Table 1
     sal_net.load_state_dict(torch.load('sal.pth'))
     output_dir = '/'.join([opt.result_dir, 'sal'])
