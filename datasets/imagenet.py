@@ -83,30 +83,44 @@ class ImageFiles(BaseData):
 
 
 class ImageNetDetCls(BaseData):
-    def __init__(self, devkit_dir, size=256, training=True,
+    def __init__(self, pathimg, path_devkit, size=256, training=True,
                  crop=None, rotate=None, flip=False, mean=None, std=None):
         super(ImageNetDetCls, self).__init__(size=size, crop=crop, rotate=rotate, flip=flip, mean=mean, std=std)
-        self.root = devkit_dir
-        txts = os.listdir(os.path.join(devkit_dir, 'data', 'det_lists'))
-        txts = filter(lambda x: x.startswith('train_pos') or x.startswith('train_part'), txts)
+        self.pathimg = pathimg
+        txts = os.listdir(os.path.join(path_devkit, 'data', 'det_lists'))
+        txts = filter(lambda x: x.startswith('train_pos') #or x.startswith('train_part')
+                , txts)
         file2lbl = {}
         for txt in txts:
-            files = open(os.path.join(devkit_dir, 'data', 'det_lists', txt)).readlines()
+            files = open(os.path.join(path_devkit, 'data', 'det_lists', txt)).readlines()
             for f in files:
                 f = f.strip('\n')+'.JPEG'
                 if f in file2lbl:
                     file2lbl[f] += [int(txt.split('.')[0].split('_')[-1])]
                 else:
                     file2lbl[f] = [int(txt.split('.')[0].split('_')[-1])]
-        self.file2lbl = file2lbl.items()
+        list_filenames = []
+        labels = []
+
+        for filename, lbl in file2lbl.items():
+            list_filenames.append(filename)
+            onehot = np.zeros(200)
+            lbl = np.array(lbl)-1
+            onehot[lbl] = 1
+            onehot = torch.from_numpy(onehot).float()
+            labels.append(onehot)
+        labels = torch.stack(labels, 0)
+        self.labels = labels
+        self.list_filenames = list_filenames
 
     def __len__(self):
-        return len(self.file2lbl)
+        return len(self.list_filenames)
 
     def __getitem__(self, index):
         # load image
-        img_file, lbl = self.file2lbl[index]
-        img = Image.open(os.path.join(self.root, 'images', img_file)).convert('RGB')
+        img_file = self.list_filenames[index]
+        onehot = self.labels[index]
+        img = Image.open(os.path.join(self.pathimg, img_file)).convert('RGB')
 
         if self.crop is not None:
             img, = self.random_crop(img)
@@ -128,10 +142,6 @@ class ImageNetDetCls(BaseData):
         img = img.transpose(2, 0, 1)
         img = torch.from_numpy(img).float()
 
-        onehot = np.zeros(200)
-        lbl = np.array(lbl)-1
-        onehot[lbl] = 1
-        onehot = torch.from_numpy(onehot).float()
         return img, onehot
 
 

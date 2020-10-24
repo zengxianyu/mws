@@ -13,9 +13,6 @@ import pdb
 import torchvision
 import torch
 import sys
-sys.path.append('../../../')
-from evaluate_sal import fm_and_mae
-from models.networks.densenet import densenet169
 
 # def deep_mr():
 
@@ -154,7 +151,7 @@ def mr(imgs, list_probs, alpha=0.99, theta=10.0):
         list_sp_probs = [np.array(sp_probs) for sp_probs in list_sp_probs]
         seed = np.ones(sp_num)
         for sp_probs in list_sp_probs:
-            th = sp_probs.mean()
+            th = sp_probs.mean()*2
             seed[sp_probs<th] = 0
         # affinity matrix
         edges = make_graph(sp_label)
@@ -180,8 +177,7 @@ def mr(imgs, list_probs, alpha=0.99, theta=10.0):
         fsal = optAff.dot(seed)
         fsal = (fsal - fsal.min()) / (fsal.max() - fsal.min())
         th = fsal.mean()
-        fsal[fsal>th] = 1
-        fsal[fsal<=th] = 0
+        fsal = (fsal>th).astype(np.float)
         msk = np.zeros((hh, ww))
         for i in range(sp_num):
             msk[sp_label==i] = fsal[i]

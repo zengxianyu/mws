@@ -11,25 +11,25 @@ import sys
 
 
 def proc_densenet(model):
-    def hook(module, input, output):
-        model.feats[output.device.index] += [output]
-    model.features.transition2[-2].register_forward_hook(hook)
-    model.features.transition1[-2].register_forward_hook(hook)
+    #def hook(module, input, output):
+    #    model.feats[output.device.index] += [output]
+    #model.features.transition2[-2].register_forward_hook(hook)
+    #model.features.transition1[-2].register_forward_hook(hook)
     # dilation
-    # def remove_sequential(all_layers, network):
-    #     for layer in network.children():
-    #         if isinstance(layer, nn.Sequential):  # if sequential layer, apply recursively to layers in sequential layer
-    #             remove_sequential(all_layers, layer)
-    #         if list(layer.children()) == []:  # if leaf node, add it to list
-    #             all_layers.append(layer)
+    def remove_sequential(all_layers, network):
+        for layer in network.children():
+            if isinstance(layer, nn.Sequential):  # if sequential layer, apply recursively to layers in sequential layer
+                remove_sequential(all_layers, layer)
+            if list(layer.children()) == []:  # if leaf node, add it to list
+                all_layers.append(layer)
     model.features.transition3[-1].kernel_size = 1
     model.features.transition3[-1].stride = 1
-    # all_layers = []
-    # remove_sequential(all_layers, model.features.denseblock4)
-    # for m in all_layers:
-    #     if isinstance(m, nn.Conv2d) and m.kernel_size==(3, 3):
-    #         m.dilation = (2, 2)
-    #         m.padding = (2, 2)
+    #all_layers = []
+    #remove_sequential(all_layers, model.features.denseblock4)
+    #for m in all_layers:
+    #    if isinstance(m, nn.Conv2d) and m.kernel_size==(3, 3):
+    #        m.dilation = (2, 2)
+    #        m.padding = (2, 2)
     model.classifier = None
     return model
 
@@ -39,7 +39,7 @@ procs = {
          }
 
 class EncoderCNN(nn.Module):
-    def __init__(self, patt_size=512, base='densenet169', usem=False):
+    def __init__(self, patt_size=512, base='densenet169'):
         super(EncoderCNN, self).__init__()
         dims = dim_dict[base][::-1]
         self.pred = nn.Conv2d(dims[0], 1, kernel_size=1)
@@ -52,7 +52,6 @@ class EncoderCNN(nn.Module):
         self.feature = densenet169(pretrained=True)
         self.feature.feats = {}
         self.feature = procs[base](self.feature)
-        self.usem = usem
 
         self.apply(fraze_bn)
 
@@ -63,10 +62,7 @@ class EncoderCNN(nn.Module):
         msk = self.pred(feats0)
         big_msk = F.upsample(msk, scale_factor=16, mode='bilinear')
         feat = self.reduce(feats0)
-        if self.usem:
-            msk_feat = self.param_pool(feat*F.sigmoid(msk))
-        else:
-            msk_feat = self.param_pool(feat)
+        msk_feat = self.param_pool(feat*F.sigmoid(msk))
         return big_msk, msk, msk_feat
 
 
@@ -107,9 +103,9 @@ class DecoderRNN(nn.Module):
 
 class SalCap(nn.Module):
     def __init__(self, vocab_size, base='densenet169',
-                 embed_size=512, hidden_size=512, num_layers=1, max_seq_length=20, usem=False, rcap=True):
+                 embed_size=512, hidden_size=512, num_layers=1, max_seq_length=20, rcap=True):
         super(SalCap, self).__init__()
-        self.encoder = EncoderCNN(embed_size, base=base, usem=usem)
+        self.encoder = EncoderCNN(embed_size, base=base)
         self.decoder = DecoderRNN(embed_size, hidden_size, vocab_size, num_layers, max_seq_length)
         self.rcap= rcap
 
