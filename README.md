@@ -29,7 +29,7 @@ python main.py \
 ```
 
 ### Train
-[code](https://github.com/zengxianyu/trainmws)
+Please checkout the other branch of this repo
 
 ## Citation
 ```
