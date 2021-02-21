@@ -26,7 +26,8 @@ def get_filename(path, list_save):
         for folder in os.listdir(path):
             get_filename(os.path.join(path, folder), list_save)
     elif path.endswith(file_postfix):
-        _path = path.replace(file_postfix, "")
+        #_path = path.replace(file_postfix, "")
+        _path = path
         _path = _path.replace(path_data+"/", "")
         list_save.append(_path)
 
